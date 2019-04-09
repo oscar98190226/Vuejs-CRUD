@@ -48,16 +48,16 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { REGISTER } from "@/store/actions.type";
+import { mapState } from 'vuex'
+import { SIGNUP } from '@/store/actions'
 
 export default {
-  name: "RwvRegister",
+  name: "Signup",
   data() {
     return {
-      username: "",
-      email: "",
-      password: ""
+      username: '',
+      email: '',
+      password: ''
     };
   },
   computed: {
@@ -67,13 +67,12 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.$store
-        .dispatch(REGISTER, {
-          email: this.email,
+      this.$store.dispatch(SIGNUP, {
+          username: this.username,
           password: this.password,
-          username: this.username
+          email: this.email
         })
-        .then(() => this.$router.push({ name: "home" }));
+        .then(() => this.$router.push({ name: 'login' }));
     }
   }
 };
