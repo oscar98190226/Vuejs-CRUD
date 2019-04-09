@@ -5,14 +5,12 @@
         <div class="col-md-6 offset-md-3 col-xs-12">
           <h1 class="text-xs-center">Log In</h1>
           <p class="text-xs-center">
-            <router-link :to="{ name: 'signup' }">
-              Create new?
-            </router-link>
+            <router-link :to="{ name: 'signup' }"> Create new? </router-link>
           </p>
           <ul v-if="errors" class="error-messages">
             <li v-for="(v, k) in errors" :key="k">{{ k }} {{ v | error }}</li>
           </ul>
-          <form v-on:submit.prevent="onSubmit(username, password);">
+          <form v-on:submit.prevent="onSubmit(username, password)">
             <fieldset class="form-group">
               <input
                 class="form-control form-control-lg"
@@ -29,9 +27,7 @@
                 placeholder="Password"
               />
             </fieldset>
-            <button class="btn btn-lg btn-primary pull-xs-right">
-              Log in
-            </button>
+            <button class="btn btn-lg btn-primary pull-xs-right">Log in</button>
           </form>
         </div>
       </div>
@@ -44,18 +40,18 @@ import { mapState } from 'vuex'
 import { LOGIN } from '@/store/actions'
 
 export default {
-  name: "Login",
+  name: 'Login',
   data() {
     return {
       username: null,
       password: null
-    };
+    }
   },
   methods: {
     onSubmit(username, password) {
       this.$store
         .dispatch(LOGIN, { username, password })
-        .then(() => this.$router.push({ name: "home" }));
+        .then(() => this.$router.push({ name: 'home' }))
     }
   },
   computed: {
@@ -63,5 +59,5 @@ export default {
       errors: state => state.auth.errors
     })
   }
-};
+}
 </script>
