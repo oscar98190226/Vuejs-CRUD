@@ -4146,6 +4146,11 @@ flatten@^1.0.2:
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
   integrity sha1-2uRqnXj74lKSJYzB54CkHZXAN4I=
 
+flatulence@^0.2.13:
+  version "0.2.13"
+  resolved "https://registry.yarnpkg.com/flatulence/-/flatulence-0.2.13.tgz#411e370abaf185a31995b34fade42e0dd08a7e76"
+  integrity sha1-QR43CrrxhaMZlbNPreQuDdCKfnY=
+
 flush-write-stream@^1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/flush-write-stream/-/flush-write-stream-1.0.3.tgz#c5d586ef38af6097650b49bc41b55fabb19f35bd"
@@ -9900,6 +9905,14 @@ vue-router@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.0.1.tgz#d9b05ad9c7420ba0f626d6500d693e60092cc1e9"
   integrity sha512-vLLoY452L+JBpALMP5UHum9+7nzR9PeIBCghU9ZtJ1eWm6ieUI8Zb/DI3MYxH32bxkjzYV1LRjNv4qr8d+uX/w==
+
+vue-simpleform@^0.0.13:
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/vue-simpleform/-/vue-simpleform-0.0.13.tgz#a26dd035ed87343f7a1ccb247037b0050800e209"
+  integrity sha512-UyexR6WZwivdV7tOCdWVA8nmD1RXOBPQjvUJ7pA1aOOOxXm+xkXlRzNCt2XZNBktSpDBaWwYpPArwgT7JtJVNw==
+  dependencies:
+    flatulence "^0.2.13"
+    lodash "^4.17.4"
 
 vue-style-loader@^4.1.0:
   version "4.1.2"

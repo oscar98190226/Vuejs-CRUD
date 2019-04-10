@@ -6,12 +6,7 @@
       </router-link>
       <ul v-if="!isAuthenticated" class="nav navbar-nav pull-xs-right">
         <li class="nav-item">
-          <router-link
-            class="nav-link"
-            active-class="active"
-            exact
-            :to="{ name: 'login' }"
-          >
+          <router-link class="nav-link" active-class="active" exact to="/login">
             <i class="ion-compose"></i>Log in
           </router-link>
         </li>
@@ -20,7 +15,7 @@
             class="nav-link"
             active-class="active"
             exact
-            :to="{ name: 'signup' }"
+            to="/signup"
           >
             <i class="ion-compose"></i>Sign up
           </router-link>
@@ -28,12 +23,7 @@
       </ul>
       <ul v-else class="nav navbar-nav pull-xs-right">
         <li class="nav-item">
-          <router-link
-            class="nav-link"
-            active-class="active"
-            exact
-            :to="{ name: 'home' }"
-          >
+          <router-link class="nav-link" active-class="active" exact to="/home">
             Home
           </router-link>
         </li>
@@ -42,18 +32,13 @@
             class="nav-link"
             active-class="active"
             exact
-            :to="{ name: 'entry' }"
+            to="/record"
           >
             Entry
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link
-            class="nav-link"
-            active-class="active"
-            exact
-            :to="{ name: 'user' }"
-          >
+          <router-link class="nav-link" active-class="active" exact to="/user">
             User
           </router-link>
         </li>

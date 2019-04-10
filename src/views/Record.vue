@@ -10,26 +10,29 @@
     </div>
     <div>
       <v-toolbar flat color="white">
-        <v-toolbar-title>User Table</v-toolbar-title>
+        <v-toolbar-title>Record Table</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn color="primary" dark> Add User </v-btn>
+        <v-btn color="primary" dark> Add Record </v-btn>
       </v-toolbar>
-      <div v-if="!!users.length && !isLoading">
+      <div v-if="!!records.length && !isLoading">
         <v-data-table
           :headers="headers"
-          :items="users"
+          :items="records"
           :search="search"
           hide-actions
           :pagination.sync="pagination"
           class="elevation-1"
         >
           <template v-slot:items="props">
-            <td>{{ props.item.username }}</td>
-            <td>{{ props.item.email }}</td>
-            <td>{{ props.item.role }}</td>
+            <td>{{ props.item.date }}</td>
+            <td>{{ props.item.distance }}</td>
+            <td>{{ props.item.duration }}</td>
+            <td>
+              {{ fixedPrecision(props.item.distance / props.item.duration) }}
+            </td>
             <td>
               <router-link
-                :to="{ name: 'user-detail', params: { id: props.item.id } }"
+                :to="{ name: 'entry-detail', params: { id: props.item.id } }"
                 >Update</router-link
               >
             </td>
@@ -58,18 +61,19 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { GET_USERS, DELETE_USER } from '@/store/actions'
+import { GET_RECORDS, DELETE_RECORD } from '@/store/actions'
 
 export default {
-  name: 'User',
+  name: 'Record',
   data: function() {
     return {
       search: '',
       pagination: {},
       headers: [
-        { text: 'UserName', value: 'username' },
-        { text: 'Email', value: 'email', sortable: false },
-        { text: 'Role', value: 'role' },
+        { text: 'Date', value: 'date' },
+        { text: 'Distance (m)', value: 'distance' },
+        { text: 'Duration (min)', value: 'duration' },
+        { text: 'Avg Speed (m/min)', value: 'avg_speed' },
         { text: '#', value: 'update', sortable: false },
         { text: '', value: 'delete', sortable: false }
       ],
@@ -78,7 +82,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch(GET_USERS).then(() => {
+    this.$store.dispatch(GET_RECORDS).then(() => {
       this.isLoading = false
     })
   },
@@ -92,15 +96,18 @@ export default {
 
       return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
     },
-    ...mapGetters(['users'])
+    ...mapGetters(['records'])
   },
   methods: {
     handleDelete: function(id) {
       if (window.confirm('Are you sure to delete this user?')) {
-        this.$store.dispatch(DELETE_USER, id).then(() => {
+        this.$store.dispatch(DELETE_RECORD, id).then(() => {
           this.showSnackBar = true
         })
       }
+    },
+    fixedPrecision: function(input) {
+      return Math.round(input * 1000) / 1000
     }
   }
 }

@@ -85,7 +85,7 @@ const mutations = {
   },
 
   [ADD_USER_IN_LIST](state, user) {
-    state.push(user)
+    state.users.push(user)
   },
 
   [UPDATE_USER_IN_LIST](state, user) {

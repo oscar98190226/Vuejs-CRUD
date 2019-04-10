@@ -3,7 +3,7 @@
     <div class="banner">
       <div class="container">
         <h1 class="logo-font">Welcome to Jogging Track</h1>
-        <p>A place to record your entries</p>
+        <p>A place to save your records</p>
       </div>
     </div>
   </div>

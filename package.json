@@ -9,6 +9,7 @@
     "vue-axios": "^2.1.4",
     "vue-loader": "^15.7.0",
     "vue-router": "^3.0.1",
+    "vue-simpleform": "^0.0.13",
     "vuetify": "^1.5.10",
     "vuex": "^3.0.1"
   },
