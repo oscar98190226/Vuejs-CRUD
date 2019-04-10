@@ -37,6 +37,26 @@
             Home
           </router-link>
         </li>
+        <li class="nav-item">
+          <router-link
+            class="nav-link"
+            active-class="active"
+            exact
+            :to="{ name: 'entry' }"
+          >
+            Entry
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link
+            class="nav-link"
+            active-class="active"
+            exact
+            :to="{ name: 'user' }"
+          >
+            User
+          </router-link>
+        </li>
       </ul>
     </div>
   </nav>
@@ -46,9 +66,9 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: "Header",
+  name: 'Header',
   computed: {
     ...mapGetters(['currentUser', 'isAuthenticated'])
   }
-};
+}
 </script>

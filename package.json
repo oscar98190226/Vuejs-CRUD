@@ -5,8 +5,9 @@
     "date-fns": "^1.29.0",
     "marked": "^0.5.1",
     "register-service-worker": "^1.0.0",
-    "vue": "^2.5.17",
+    "vue": "^2.6.10",
     "vue-axios": "^2.1.4",
+    "vue-loader": "^15.7.0",
     "vue-router": "^3.0.1",
     "vuetify": "^1.5.10",
     "vuex": "^3.0.1"
@@ -25,7 +26,7 @@
     "lint-staged": "^7.3.0",
     "node-sass": "^4.10.0",
     "sass-loader": "^7.1.0",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.6.10"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
