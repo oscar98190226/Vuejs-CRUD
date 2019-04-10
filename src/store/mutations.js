@@ -10,8 +10,9 @@ export const ADD_USER_IN_LIST = 'addUserInList'
 export const UPDATE_USER_IN_LIST = 'updateUserInList'
 export const DELETE_USER_IN_LIST = 'deleteUserInList'
 export const SET_USER_ERROR = 'setUserError'
+export const SET_RECORD_INIT = 'setInit'
 
-// RECORD mutations
+// Record mutations
 export const SET_RECORDS = 'setRecords'
 export const SET_RECORD = 'setRecord'
 export const ADD_RECORD_IN_LIST = 'addRecordInList'

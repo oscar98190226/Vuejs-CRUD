@@ -27,17 +27,17 @@
             Home
           </router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" v-if="isAllowedEntry">
           <router-link
             class="nav-link"
             active-class="active"
             exact
             to="/record"
           >
-            Entry
+            Record
           </router-link>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" v-if="isAllowedUser">
           <router-link class="nav-link" active-class="active" exact to="/user">
             User
           </router-link>
@@ -55,11 +55,18 @@
 <script>
 import { mapGetters } from 'vuex'
 import { LOGOUT } from '@/store/actions'
+import { isUserOrAdmin, isManagerOrAdmin } from '@/helpers'
 
 export default {
   name: 'Header',
   computed: {
-    ...mapGetters(['currentUser', 'isAuthenticated'])
+    ...mapGetters(['currentUser', 'isAuthenticated']),
+    isAllowedEntry() {
+      return isUserOrAdmin(this.currentUser)
+    },
+    isAllowedUser() {
+      return isManagerOrAdmin(this.currentUser)
+    }
   },
   methods: {
     handleLogout() {

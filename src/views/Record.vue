@@ -8,17 +8,17 @@
         </div>
       </div>
     </div>
+
     <div>
       <v-toolbar flat color="white">
         <v-toolbar-title>Record Table</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn color="primary" dark> Add Record </v-btn>
+        <v-btn color="primary" dark @click="handleAdd"> Add Record </v-btn>
       </v-toolbar>
       <div v-if="!!records.length && !isLoading">
         <v-data-table
           :headers="headers"
           :items="records"
-          :search="search"
           hide-actions
           :pagination.sync="pagination"
           class="elevation-1"
@@ -31,9 +31,12 @@
               {{ fixedPrecision(props.item.distance / props.item.duration) }}
             </td>
             <td>
-              <router-link
-                :to="{ name: 'entry-detail', params: { id: props.item.id } }"
-                >Update</router-link
+              <v-btn
+                color="primary"
+                small
+                dark
+                @click="handleUpdate(props.item.id)"
+                >Update</v-btn
               >
             </td>
             <td>
@@ -54,38 +57,100 @@
       <div v-else><h3>No available data</h3></div>
     </div>
     <v-snackbar v-model="showSnackBar" color="success" :timeout="1000">
-      Delete Success!
+      {{ method }} Success!
     </v-snackbar>
+
+    <v-layout>
+      <v-dialog v-model="dialog" max-width="350">
+        <v-card>
+          <v-card-title class="headline">
+            {{ `${method} Record` }}
+          </v-card-title>
+
+          <v-card-text>
+            <form v-on:submit.prevent="handleSubmit">
+              <fieldset class="form-group col-md-12">
+                <label>Date:</label>
+                <input
+                  class="form-control form-control-md"
+                  type="date"
+                  v-model="record.date"
+                />
+              </fieldset>
+              <fieldset class="form-group col-md-12">
+                <label>Distance:</label>
+                <input
+                  class="form-control form-control-md"
+                  type="number"
+                  v-model="record.distance"
+                  placeholder="Distance"
+                />
+              </fieldset>
+              <fieldset class="form-group col-md-12">
+                <label>Duration:</label>
+                <input
+                  class="form-control form-control-md"
+                  type="number"
+                  v-model="record.duration"
+                  placeholder="Distance"
+                />
+              </fieldset>
+
+              <v-spacer></v-spacer>
+              <v-btn color="green darken-1" flat="flat" @click="dialog = false">
+                Discard
+              </v-btn>
+              <v-btn color="primary pull-xs-right" type="submit">{{
+                method
+              }}</v-btn>
+            </form>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+    </v-layout>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { GET_RECORDS, DELETE_RECORD } from '@/store/actions'
+import {
+  GET_RECORDS,
+  DELETE_RECORD,
+  GET_RECORD,
+  UPDATE_RECORD,
+  CREATE_RECORD,
+  INIT_RECORD
+} from '@/store/actions'
 
 export default {
   name: 'Record',
   data: function() {
     return {
-      search: '',
+      // Data Table Info
       pagination: {},
       headers: [
         { text: 'Date', value: 'date' },
-        { text: 'Distance (m)', value: 'distance' },
-        { text: 'Duration (min)', value: 'duration' },
-        { text: 'Avg Speed (m/min)', value: 'avg_speed' },
+        { text: 'Distance (metre)', value: 'distance' },
+        { text: 'Duration (second)', value: 'duration' },
+        { text: 'Avg Speed (m/s)', value: 'avg_speed' },
         { text: '#', value: 'update', sortable: false },
         { text: '', value: 'delete', sortable: false }
       ],
       isLoading: true,
-      showSnackBar: false
+      // Optional Flag
+      showSnackBar: false,
+      dialog: false,
+
+      method: ''
     }
   },
+
   created() {
     this.$store.dispatch(GET_RECORDS).then(() => {
       this.isLoading = false
     })
   },
+
   computed: {
     pages() {
       if (
@@ -96,19 +161,56 @@ export default {
 
       return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
     },
-    ...mapGetters(['records'])
+    ...mapGetters(['records', 'record'])
   },
+
   methods: {
     handleDelete: function(id) {
       if (window.confirm('Are you sure to delete this user?')) {
+        this.method = 'Delete'
         this.$store.dispatch(DELETE_RECORD, id).then(() => {
           this.showSnackBar = true
         })
       }
     },
+
+    handleUpdate: function(id) {
+      this.method = 'Update'
+      this.$store.dispatch(GET_RECORD, id).then(() => {
+        this.dialog = true
+      })
+    },
+
+    handleAdd: function() {
+      this.method = 'Add'
+      this.$store.dispatch(INIT_RECORD).then(() => {
+        this.dialog = true
+      })
+    },
+
+    handleSubmit: function() {
+      if (this.method === 'Update') {
+        this.$store.dispatch(UPDATE_RECORD, this.record).then(() => {
+          this.dialog = false
+          this.showSnackBar = true
+        })
+      } else if (this.method === 'Add') {
+        this.$store.dispatch(CREATE_RECORD, this.record).then(() => {
+          this.dialog = false
+          this.showSnackBar = true
+        })
+      }
+    },
+
     fixedPrecision: function(input) {
       return Math.round(input * 1000) / 1000
     }
   }
 }
 </script>
+
+<style>
+[type='number'] {
+  width: 100% !important;
+}
+</style>
