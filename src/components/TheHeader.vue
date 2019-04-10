@@ -42,6 +42,11 @@
             User
           </router-link>
         </li>
+        <li class="nav-item">
+          <router-link class="nav-link" active-class="active" exact to="/#">
+            <i class="ion-arrow-return-right" @click="handleLogout"></i>
+          </router-link>
+        </li>
       </ul>
     </div>
   </nav>
@@ -49,11 +54,19 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { LOGOUT } from '@/store/actions'
 
 export default {
   name: 'Header',
   computed: {
     ...mapGetters(['currentUser', 'isAuthenticated'])
+  },
+  methods: {
+    handleLogout() {
+      this.$store.dispatch(LOGOUT).then(() => {
+        this.$router.push({ name: 'login' })
+      })
+    }
   }
 }
 </script>
