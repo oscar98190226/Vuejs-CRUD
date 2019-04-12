@@ -5,6 +5,7 @@
       <v-content>
         <v-container fluid><router-view></router-view></v-container>
       </v-content>
+      <notifications group="alert" position="bottom right" />
     </v-app>
   </div>
 </template>

@@ -42,6 +42,16 @@
             User
           </router-link>
         </li>
+        <li class="nav-item" v-if="currentUser.role === 'USER'">
+          <router-link
+            class="nav-link"
+            active-class="active"
+            exact
+            to="/report"
+          >
+            Report
+          </router-link>
+        </li>
         <li class="nav-item">
           <router-link class="nav-link" active-class="active" exact to="/#">
             <i class="ion-arrow-return-right" @click="handleLogout"></i>

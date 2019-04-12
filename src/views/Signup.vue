@@ -9,9 +9,6 @@
               Have an account?
             </router-link>
           </p>
-          <ul v-if="errors" class="error-messages">
-            <li v-for="(v, k) in errors" :key="k">{{ k }} {{ v | error }}</li>
-          </ul>
           <form v-on:submit.prevent="onSubmit">
             <fieldset class="form-group">
               <input
@@ -19,6 +16,7 @@
                 type="text"
                 v-model="username"
                 placeholder="Username"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -27,6 +25,7 @@
                 type="text"
                 v-model="email"
                 placeholder="Email"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -35,6 +34,7 @@
                 type="password"
                 v-model="password"
                 placeholder="Password"
+                required
               />
             </fieldset>
             <button class="btn btn-lg btn-primary pull-xs-right">
@@ -52,13 +52,13 @@ import { mapState } from 'vuex'
 import { SIGNUP } from '@/store/actions'
 
 export default {
-  name: "Signup",
+  name: 'Signup',
   data() {
     return {
       username: '',
       email: '',
       password: ''
-    };
+    }
   },
   computed: {
     ...mapState({
@@ -67,13 +67,30 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.$store.dispatch(SIGNUP, {
+      this.$store
+        .dispatch(SIGNUP, {
           username: this.username,
           password: this.password,
           email: this.email
         })
-        .then(() => this.$router.push({ name: 'login' }));
+        .then(() => {
+          this.$notify({
+            group: 'alert',
+            type: 'success',
+            title: 'Success!',
+            text: 'Signup Success!'
+          })
+          this.$router.push({ name: 'login' })
+        })
+        .catch(() => {
+          this.$notify({
+            group: 'alert',
+            type: 'error',
+            title: 'Error!',
+            text: this.errors
+          })
+        })
     }
   }
-};
+}
 </script>

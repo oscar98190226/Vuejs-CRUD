@@ -22,8 +22,8 @@ const ApiService = {
     })
   },
 
-  get(resource, param = "") {
-    return Vue.axios.get(`${resource}/${param}`).catch(error => {
+  get(resource) {
+    return Vue.axios.get(`${resource}`).catch(error => {
       throw new Error(`ApiService ${error}`)
     })
   },

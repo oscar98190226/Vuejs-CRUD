@@ -7,9 +7,6 @@
           <p class="text-xs-center">
             <router-link :to="{ name: 'signup' }"> Create new? </router-link>
           </p>
-          <ul v-if="errors" class="error-messages">
-            <li v-for="(v, k) in errors" :key="k">{{ k }} {{ v | error }}</li>
-          </ul>
           <form v-on:submit.prevent="onSubmit(username, password)">
             <fieldset class="form-group">
               <input
@@ -17,6 +14,7 @@
                 type="text"
                 v-model="username"
                 placeholder="username"
+                required
               />
             </fieldset>
             <fieldset class="form-group">
@@ -25,6 +23,7 @@
                 type="password"
                 v-model="password"
                 placeholder="Password"
+                required
               />
             </fieldset>
             <button class="btn btn-lg btn-primary pull-xs-right">Log in</button>
@@ -51,7 +50,23 @@ export default {
     onSubmit(username, password) {
       this.$store
         .dispatch(LOGIN, { username, password })
-        .then(() => this.$router.push({ name: 'home' }))
+        .then(() => {
+          this.$notify({
+            group: 'alert',
+            type: 'success',
+            title: 'Success!',
+            text: 'Login Success!'
+          })
+          this.$router.push({ name: 'home' })
+        })
+        .catch(() => {
+          this.$notify({
+            group: 'alert',
+            type: 'error',
+            title: 'Error!',
+            text: this.errors
+          })
+        })
     }
   },
   computed: {

@@ -1,10 +1,12 @@
+import Vue from 'vue'
 import ApiService from '@/common/api.service'
 import {
   GET_USERS,
   GET_USER,
   CREATE_USER,
   UPDATE_USER,
-  DELETE_USER
+  DELETE_USER,
+  INIT_USER
 } from '../actions'
 import {
   SET_USERS,
@@ -12,14 +14,27 @@ import {
   ADD_USER_IN_LIST,
   UPDATE_USER_IN_LIST,
   DELETE_USER_IN_LIST,
-  SET_USER_ERROR
+  SET_USER_ERROR,
+  SET_USER_INIT
 } from '../mutations'
 import _ from 'lodash'
 
-const state = {
+const initialState = {
   errors: null,
   users: [],
-  user: {}
+  user: {
+    id: '',
+    username: '',
+    email: '',
+    password: '',
+    profile: {
+      role: ''
+    }
+  }
+}
+
+const state = {
+  ...initialState
 }
 
 const getters = {
@@ -33,7 +48,7 @@ const getters = {
 
 const actions = {
   [GET_USERS](context) {
-    ApiService.get('user')
+    ApiService.get('user/')
       .then(({ data }) => {
         context.commit(SET_USERS, data)
       })
@@ -43,23 +58,25 @@ const actions = {
   },
 
   [GET_USER](context, param) {
-    ApiService.get(`user/${param}`)
+    ApiService.get(`user/${param}/`)
       .then(({ data }) => context.commit(SET_USER, data))
       .catch(({ response }) =>
         context.commit(SET_USER_ERROR, response.data.errors)
       )
   },
 
-  [CREATE_USER](context, data) {
-    ApiService.get('user', { body: data })
-      .then(({ data }) => context.commit(ADD_USER_IN_LIST, data))
+  [CREATE_USER](context, info) {
+    ApiService.post('user/', info)
+      .then(({ data }) => {
+        context.commit(ADD_USER_IN_LIST, data)
+      })
       .catch(({ response }) =>
         context.commit(SET_USER_ERROR, response.data.errors)
       )
   },
 
-  [UPDATE_USER](context, param, data) {
-    ApiService.update(`user/${param}`, { body: data })
+  [UPDATE_USER](context, info) {
+    ApiService.put(`user/${info.id}/`, info)
       .then(({ data }) => context.commit(UPDATE_USER_IN_LIST, data))
       .catch(({ response }) =>
         context.commit(SET_USER_ERROR, response.data.errors)
@@ -72,6 +89,10 @@ const actions = {
       .catch(({ response }) =>
         context.commit(SET_USER_ERROR, response.data.errors)
       )
+  },
+
+  [INIT_USER](context) {
+    context.commit(SET_USER_INIT)
   }
 }
 
@@ -81,7 +102,8 @@ const mutations = {
   },
 
   [SET_USER](state, user) {
-    state.user = user
+    7
+    state.user = Object.assign({}, user)
   },
 
   [ADD_USER_IN_LIST](state, user) {
@@ -90,8 +112,10 @@ const mutations = {
 
   [UPDATE_USER_IN_LIST](state, user) {
     let index = _.findIndex(state.users, { id: user.id })
-    state.users[index] = user
-    state.user = user
+    let tmpUsers = state.users
+    tmpUsers[index] = user
+    Vue.set(state, 'users', [...tmpUsers])
+    state.user = Object.assign({}, user)
   },
 
   [DELETE_USER_IN_LIST](state, id) {
@@ -102,6 +126,10 @@ const mutations = {
 
   [SET_USER_ERROR](state, error) {
     state.error = error
+  },
+
+  [SET_USER_INIT](state) {
+    state.user = initialState.user
   }
 }
 

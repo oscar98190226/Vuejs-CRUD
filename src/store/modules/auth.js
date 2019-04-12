@@ -20,14 +20,18 @@ const getters = {
 
 const actions = {
   [LOGIN](context, credentials) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       ApiService.post('auth/login/', { ...credentials })
         .then(({ data }) => {
           context.commit(SET_AUTH, data)
           resolve(data)
         })
         .catch(({ response }) => {
-          context.commit(SET_ERROR, response.data.errors)
+          context.commit(
+            SET_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
         })
     })
   },
@@ -35,11 +39,19 @@ const actions = {
     context.commit(REMOVE_AUTH)
   },
   [SIGNUP](context, credentials) {
-    ApiService.post('auth/signup/', { ...credentials }).catch(
-      ({ response }) => {
-        context.commit(SET_ERROR, response.data.errors)
-      }
-    )
+    return new Promise((resolve, reject) => {
+      ApiService.post('auth/signup/', { ...credentials })
+        .then(({ data }) => {
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
   [CHECK_AUTH](context) {
     if (JwtService.getToken()) {

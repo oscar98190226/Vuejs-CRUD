@@ -5,6 +5,7 @@ import SignupPage from '@/views/Signup'
 import HomePage from '@/views/Home'
 import UserPage from '@/views/User'
 import RecordPage from '@/views/Record'
+import ReportPage from '@/views/Report'
 
 Vue.use(Router)
 
@@ -15,6 +16,7 @@ export default new Router({
     { path: '/signup', component: SignupPage, name: 'signup' },
     { path: '/home', component: HomePage, name: 'home' },
     { path: '/user', component: UserPage, name: 'user' },
-    { path: '/record', component: RecordPage, name: 'record' }
+    { path: '/record', component: RecordPage, name: 'record' },
+    { path: '/report', component: ReportPage, name: 'report' }
   ]
 })
