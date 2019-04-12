@@ -48,47 +48,89 @@ const getters = {
 
 const actions = {
   [GET_USERS](context) {
-    ApiService.get('user/')
-      .then(({ data }) => {
-        context.commit(SET_USERS, data)
-      })
-      .catch(({ response }) => {
-        context.commit(SET_USER_ERROR, response.data.errors)
-      })
+    return new Promise((resolve, reject) => {
+      ApiService.get('user/')
+        .then(({ data }) => {
+          context.commit(SET_USERS, data)
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          console.log('User Error: ', response)
+          context.commit(
+            SET_USER_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
 
   [GET_USER](context, param) {
-    ApiService.get(`user/${param}/`)
-      .then(({ data }) => context.commit(SET_USER, data))
-      .catch(({ response }) =>
-        context.commit(SET_USER_ERROR, response.data.errors)
-      )
+    return new Promise((resolve, reject) => {
+      ApiService.get(`user/${param}/`)
+        .then(({ data }) => {
+          context.commit(SET_USER, data)
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_USER_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
 
   [CREATE_USER](context, info) {
-    ApiService.post('user/', info)
-      .then(({ data }) => {
-        context.commit(ADD_USER_IN_LIST, data)
-      })
-      .catch(({ response }) =>
-        context.commit(SET_USER_ERROR, response.data.errors)
-      )
+    return new Promise((resolve, reject) => {
+      ApiService.post('user/', info)
+        .then(({ data }) => {
+          context.commit(ADD_USER_IN_LIST, data)
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_USER_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
 
   [UPDATE_USER](context, info) {
-    ApiService.put(`user/${info.id}/`, info)
-      .then(({ data }) => context.commit(UPDATE_USER_IN_LIST, data))
-      .catch(({ response }) =>
-        context.commit(SET_USER_ERROR, response.data.errors)
-      )
+    return new Promise((resolve, reject) => {
+      ApiService.put(`user/${info.id}/`, info)
+        .then(({ data }) => {
+          context.commit(UPDATE_USER_IN_LIST, data)
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_USER_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
 
   [DELETE_USER](context, param) {
-    ApiService.delete(`user/${param}`)
-      .then(() => context.commit(DELETE_USER_IN_LIST, param))
-      .catch(({ response }) =>
-        context.commit(SET_USER_ERROR, response.data.errors)
-      )
+    return new Promise((resolve, reject) => {
+      ApiService.delete(`user/${param}`)
+        .then(() => {
+          context.commit(DELETE_USER_IN_LIST, param)
+          resolve()
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_USER_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
 
   [INIT_USER](context) {

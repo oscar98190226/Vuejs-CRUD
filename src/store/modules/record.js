@@ -54,45 +54,88 @@ const getters = {
 
 const actions = {
   [GET_RECORDS](context) {
-    ApiService.get(`entry?from=${context.state.from}&to=${context.state.to}`)
-      .then(({ data }) => {
-        context.commit(SET_RECORDS, data)
-      })
-      .catch(({ response }) => {
-        context.commit(SET_RECORD_ERROR, response.data.errors)
-      })
+    return new Promise((resolve, reject) => {
+      ApiService.get(`entry?from=${context.state.from}&to=${context.state.to}`)
+        .then(({ data }) => {
+          context.commit(SET_RECORDS, data)
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_RECORD_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
 
   [GET_RECORD](context, param) {
-    ApiService.get(`entry/${param}/`)
-      .then(({ data }) => context.commit(SET_RECORD, data))
-      .catch(({ response }) =>
-        context.commit(SET_RECORD_ERROR, response.data.errors)
-      )
+    return new Promise((resolve, reject) => {
+      ApiService.get(`entry/${param}/`)
+        .then(({ data }) => {
+          context.commit(SET_RECORD, data)
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_RECORD_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
 
   [CREATE_RECORD](context, info) {
-    ApiService.post('entry/', info)
-      .then(({ data }) => {
-        context.commit(ADD_RECORD_IN_LIST, data)
-      })
-      .catch(({ response }) =>
-        context.commit(SET_RECORD_ERROR, response.data.errors)
-      )
+    return new Promise((resolve, reject) => {
+      ApiService.post('entry/', info)
+        .then(({ data }) => {
+          context.commit(ADD_RECORD_IN_LIST, data)
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_RECORD_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
 
   [UPDATE_RECORD](context, info) {
-    ApiService.put(`entry/${info.id}/`, info).then(({ data }) => {
-      context.commit(UPDATE_RECORD_IN_LIST, data)
+    return new Promise((resolve, reject) => {
+      ApiService.put(`entry/${info.id}/`, info)
+        .then(({ data }) => {
+          context.commit(UPDATE_RECORD_IN_LIST, data)
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_RECORD_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
     })
   },
 
   [DELETE_RECORD](context, param) {
-    ApiService.delete(`entry/${param}`)
-      .then(() => context.commit(DELETE_RECORD_IN_LIST, param))
-      .catch(({ response }) =>
-        context.commit(SET_RECORD_ERROR, response.data.errors)
-      )
+    return new Promise((resolve, reject) => {
+      ApiService.delete(`entry/${param}`)
+        .then(() => {
+          context.commit(DELETE_RECORD_IN_LIST, param)
+          resolve()
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_RECORD_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
+    })
   },
 
   [INIT_RECORD](context) {
@@ -100,8 +143,19 @@ const actions = {
   },
 
   [GET_WEEKLY_REPORT](context) {
-    ApiService.get('weeklyReport').then(({ data }) => {
-      context.commit(SET_REPORT, data)
+    return new Promise((resolve, reject) => {
+      ApiService.get('weeklyReport')
+        .then(({ data }) => {
+          context.commit(SET_REPORT, data)
+          resolve(data)
+        })
+        .catch(({ response }) => {
+          context.commit(
+            SET_RECORD_ERROR,
+            `${response.status} Error: ${response.statusText}`
+          )
+          reject()
+        })
     })
   },
 

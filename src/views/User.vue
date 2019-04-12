@@ -15,13 +15,7 @@
         <v-btn color="primary" dark @click="handleAdd"> Add User </v-btn>
       </v-toolbar>
       <div v-if="!!users.length && !isLoading">
-        <v-data-table
-          :headers="headers"
-          :items="users"
-          hide-actions
-          :pagination.sync="pagination"
-          class="elevation-1"
-        >
+        <v-data-table :headers="headers" :items="users" class="elevation-1">
           <template v-slot:items="props">
             <td>{{ props.item.username }}</td>
             <td>{{ props.item.email }}</td>
@@ -42,12 +36,6 @@
             </td>
           </template>
         </v-data-table>
-        <div class="text-xs-center pt-2">
-          <v-pagination
-            v-model="pagination.page"
-            :length="pages"
-          ></v-pagination>
-        </div>
       </div>
       <div v-else-if="isLoading"><h3>Loading...</h3></div>
       <div v-else><h3>No available data</h3></div>
@@ -67,6 +55,7 @@
                   type="text"
                   v-model="user.username"
                   placeholder="User Name"
+                  required
                 />
               </fieldset>
               <fieldset class="form-group col-md-12">
@@ -76,6 +65,7 @@
                   type="email"
                   v-model="user.email"
                   placeholder="Email"
+                  required
                 />
               </fieldset>
               <fieldset class="form-group col-md-12">
@@ -112,7 +102,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import {
   GET_USERS,
   DELETE_USER,
@@ -126,7 +116,6 @@ export default {
   name: 'User',
   data: function() {
     return {
-      pagination: {},
       headers: [
         { text: 'UserName', value: 'username' },
         { text: 'Email', value: 'email', sortable: false },
@@ -142,34 +131,36 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch(GET_USERS).then(() => {
-      this.isLoading = false
-    })
+    this.$store
+      .dispatch(GET_USERS)
+      .then(() => {
+        this.isLoading = false
+      })
+      .catch(() => this.alertError())
   },
   computed: {
-    pages() {
-      if (
-        this.pagination.rowsPerPage == null ||
-        this.pagination.totalItems == null
-      )
-        return 0
-
-      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
-    },
-    ...mapGetters(['users', 'user'])
+    ...mapGetters(['users', 'user']),
+    ...mapState({
+      errors: state => state.user.errors
+    })
   },
   methods: {
     handleDelete: function(id) {
       if (window.confirm('Are you sure to delete this user?')) {
-        this.$store.dispatch(DELETE_USER, id).then(() => {})
+        this.$store.dispatch(DELETE_USER, id).then(() => {
+          this.alertSuccess('Delete Success!')
+        })
       }
     },
 
     handleUpdate: function(id) {
       this.method = 'Update'
-      this.$store.dispatch(GET_USER, id).then(() => {
-        this.dialog = true
-      })
+      this.$store
+        .dispatch(GET_USER, id)
+        .then(() => {
+          this.dialog = true
+        })
+        .catch(() => this.alertError())
     },
 
     handleAdd: function() {
@@ -181,14 +172,40 @@ export default {
 
     handleSubmit: function() {
       if (this.method === 'Update') {
-        this.$store.dispatch(UPDATE_USER, this.user).then(() => {
-          this.dialog = false
-        })
+        this.$store
+          .dispatch(UPDATE_USER, this.user)
+          .then(() => {
+            this.dialog = false
+            this.alertSuccess('Update Success!')
+          })
+          .catch(() => this.alertError())
       } else if (this.method === 'Add') {
-        this.$store.dispatch(CREATE_USER, this.user).then(() => {
-          this.dialog = false
-        })
+        this.$store
+          .dispatch(CREATE_USER, this.user)
+          .then(() => {
+            this.dialog = false
+            this.alertSuccess('Add Success!')
+          })
+          .catch(() => this.alertError())
       }
+    },
+
+    alertSuccess: function(text) {
+      this.$notify({
+        group: 'alert',
+        type: 'success',
+        title: 'Success!',
+        text
+      })
+    },
+
+    alertError: function() {
+      this.$$notify({
+        group: 'alert',
+        type: 'error',
+        title: 'Error!',
+        text: this.errors
+      })
     }
   }
 }

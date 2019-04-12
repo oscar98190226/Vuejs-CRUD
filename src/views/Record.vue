@@ -68,13 +68,7 @@
         <v-btn color="primary" dark @click="handleAdd"> Add Record </v-btn>
       </v-toolbar>
       <div v-if="!!records.length && !isLoading">
-        <v-data-table
-          :headers="headers"
-          :items="records"
-          hide-actions
-          :pagination.sync="pagination"
-          class="elevation-1"
-        >
+        <v-data-table :headers="headers" :items="records" class="elevation-1">
           <template v-slot:items="props">
             <td>{{ props.item.user.username }}</td>
             <td>{{ props.item.date }}</td>
@@ -99,12 +93,6 @@
             </td>
           </template>
         </v-data-table>
-        <div class="text-xs-center pt-2">
-          <v-pagination
-            v-model="pagination.page"
-            :length="pages"
-          ></v-pagination>
-        </div>
       </div>
       <div v-else-if="isLoading"><h3>Loading...</h3></div>
       <div v-else><h3>No available data</h3></div>
@@ -125,6 +113,7 @@
                   class="form-control form-control-md"
                   type="date"
                   v-model="record.date"
+                  required
                 />
               </fieldset>
               <fieldset class="form-group col-md-12">
@@ -134,6 +123,7 @@
                   type="number"
                   v-model="record.distance"
                   placeholder="Distance"
+                  required
                 />
               </fieldset>
               <fieldset class="form-group col-md-12">
@@ -143,6 +133,7 @@
                   type="number"
                   v-model="record.duration"
                   placeholder="Distance"
+                  required
                 />
               </fieldset>
 
@@ -162,7 +153,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import {
   GET_RECORDS,
   DELETE_RECORD,
@@ -180,7 +171,6 @@ export default {
   data: function() {
     return {
       // Data Table Info
-      pagination: {},
       headers: [
         { text: 'User', value: 'user' },
         { text: 'Date', value: 'date' },
@@ -201,21 +191,15 @@ export default {
   },
 
   created() {
-    this.$store.dispatch(GET_RECORDS).then(() => {
-      this.isLoading = false
-    })
+    this.$store
+      .dispatch(GET_RECORDS)
+      .then(() => {
+        this.isLoading = false
+      })
+      .catch(() => this.alertError())
   },
 
   computed: {
-    pages() {
-      if (
-        this.pagination.rowsPerPage == null ||
-        this.pagination.totalItems == null
-      )
-        return 0
-
-      return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
-    },
     from: {
       get: function() {
         return this.$store.getters.from
@@ -223,9 +207,12 @@ export default {
       set: function(value) {
         this.$store.dispatch(SET_FROM_DATE, value).then(() => {
           this.isLoading = true
-          this.$store.dispatch(GET_RECORDS).then(() => {
-            this.isLoading = false
-          })
+          this.$store
+            .dispatch(GET_RECORDS)
+            .then(() => {
+              this.isLoading = false
+            })
+            .catch(() => this.alertError())
         })
       }
     },
@@ -236,28 +223,39 @@ export default {
       set: function(value) {
         this.$store.dispatch(SET_TO_DATE, value).then(() => {
           this.isLoading = true
-          this.$store.dispatch(GET_RECORDS).then(() => {
-            this.isLoading = false
-          })
+          this.$store
+            .dispatch(GET_RECORDS)
+            .then(() => {
+              this.isLoading = false
+            })
+            .catch(() => this.alertError())
         })
       }
     },
-    ...mapGetters(['records', 'record', 'currentUser'])
+    ...mapGetters(['records', 'record', 'currentUser']),
+    ...mapState({
+      errors: state => state.record.errors
+    })
   },
 
   methods: {
     handleDelete: function(id) {
       if (window.confirm('Are you sure to delete this user?')) {
         this.method = 'Delete'
-        this.$store.dispatch(DELETE_RECORD, id).then(() => {})
+        this.$store.dispatch(DELETE_RECORD, id).then(() => {
+          this.alertSuccess('Delete Success!')
+        })
       }
     },
 
     handleUpdate: function(id) {
       this.method = 'Update'
-      this.$store.dispatch(GET_RECORD, id).then(() => {
-        this.dialog = true
-      })
+      this.$store
+        .dispatch(GET_RECORD, id)
+        .then(() => {
+          this.dialog = true
+        })
+        .catch(() => this.alertError())
     },
 
     handleAdd: function() {
@@ -274,9 +272,13 @@ export default {
           user_id: this.currentUser.id
         }
 
-        this.$store.dispatch(UPDATE_RECORD, req_data).then(() => {
-          this.dialog = false
-        })
+        this.$store
+          .dispatch(UPDATE_RECORD, req_data)
+          .then(() => {
+            this.dialog = false
+            this.alertSuccess('Update Success!')
+          })
+          .catch(() => this.alertError())
       } else if (this.method === 'Add') {
         this.$store
           .dispatch(CREATE_RECORD, {
@@ -285,12 +287,32 @@ export default {
           })
           .then(() => {
             this.dialog = false
+            this.alertSuccess('Add Success!')
           })
+          .catch(() => this.alertError())
       }
     },
 
     fixedPrecision: function(input) {
       return Math.round(input * 1000) / 1000
+    },
+
+    alertSuccess: function(text) {
+      this.$notify({
+        group: 'alert',
+        type: 'success',
+        title: 'Success!',
+        text
+      })
+    },
+
+    alertError: function() {
+      this.$$notify({
+        group: 'alert',
+        type: 'error',
+        title: 'Error!',
+        text: this.errors
+      })
     }
   }
 }

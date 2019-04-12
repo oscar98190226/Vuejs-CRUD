@@ -10,7 +10,7 @@ import 'vuetify/dist/vuetify.min.css'
 import { CHECK_AUTH } from './store/actions'
 import ApiService from './common/api.service'
 import ErrorFilter from './common/error.filter'
-// import { isUserOrAdmin, isManagerOrAdmin } from './helpers'
+import { isUserOrAdmin, isManagerOrAdmin } from './helpers'
 
 Vue.config.productionTip = false
 Vue.filter('error', ErrorFilter)
@@ -21,21 +21,18 @@ ApiService.init()
 
 // Ensure we checked auth before each page load.
 router.beforeEach((to, from, next) => {
-  Promise.all([store.dispatch(CHECK_AUTH)]).then(() => {
-    // switch (to.fullPath) {
-    //   case '/user':
-    //     if (!isManagerOrAdmin(store.state.auth.user.role)) {
-    //       next('/home')
-    //     }
-    //     break
-    //   case '/record':
-    //     if (!isUserOrAdmin(store.state.auth.user.role)) {
-    //       next('/home')
-    //     }
-    //     break
-    // }
-    next()
-  })
+  Promise.all([store.dispatch(CHECK_AUTH)]).then(() => next())
+  if (to.fullPath === '/user') {
+    if (!isManagerOrAdmin(store.state.auth.user)) {
+      next('/home')
+      return
+    }
+  } else if (to.fullPath === '/record' || to.fullPath === '/report') {
+    if (!isUserOrAdmin(store.state.auth.user)) {
+      next('/home')
+      return
+    }
+  }
   next()
 })
 
