@@ -26,7 +26,7 @@
           <template v-slot:items="props">
             <td>{{ props.item.username }}</td>
             <td>{{ props.item.email }}</td>
-            <td>{{ props.item.role }}</td>
+            <td>{{ props.item.profile.role }}</td>
             <td>
               <router-link
                 :to="{ name: 'user-detail', params: { id: props.item.id } }"

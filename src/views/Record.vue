@@ -121,6 +121,7 @@ import {
   CREATE_RECORD,
   INIT_RECORD
 } from '@/store/actions'
+import _ from 'lodash'
 
 export default {
   name: 'Record',
@@ -161,7 +162,7 @@ export default {
 
       return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage)
     },
-    ...mapGetters(['records', 'record'])
+    ...mapGetters(['records', 'record', 'currentUser'])
   },
 
   methods: {
@@ -190,15 +191,25 @@ export default {
 
     handleSubmit: function() {
       if (this.method === 'Update') {
-        this.$store.dispatch(UPDATE_RECORD, this.record).then(() => {
+        let req_data = {
+          ..._.omit(this.record, ['user']),
+          user_id: this.currentUser.id
+        }
+
+        this.$store.dispatch(UPDATE_RECORD, req_data).then(() => {
           this.dialog = false
           this.showSnackBar = true
         })
       } else if (this.method === 'Add') {
-        this.$store.dispatch(CREATE_RECORD, this.record).then(() => {
-          this.dialog = false
-          this.showSnackBar = true
-        })
+        this.$store
+          .dispatch(CREATE_RECORD, {
+            ...this.record,
+            user_id: this.currentUser.id
+          })
+          .then(() => {
+            this.dialog = false
+            this.showSnackBar = true
+          })
       }
     },
 

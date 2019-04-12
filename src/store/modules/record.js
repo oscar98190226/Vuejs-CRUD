@@ -56,7 +56,6 @@ const actions = {
   [CREATE_RECORD](context, info) {
     ApiService.post('entry/', { ...info })
       .then(({ data }) => {
-        // console.log("Create Result: ", res)
         context.commit(ADD_RECORD_IN_LIST, data)
       })
       .catch(({ response }) =>
